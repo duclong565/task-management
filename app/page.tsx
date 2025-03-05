@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b">
-        <div className="container flex h-14 items-center justify-between">
+        <div className="flex gap-96 h-14 mx-16 items-center justify-between">
           <h1 className="text-xl font-bold">Task Manager</h1>
           <div className="space-x-2">
             <Link href="/login">
@@ -18,7 +18,7 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
+        <section className="mx-auto px-14 grid items-center gap-6 pb-8 pt-6 md:py-10">
           <div className="flex max-w-[980px] flex-col items-start gap-2">
             <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-4xl">
               Organize your tasks efficiently
@@ -31,7 +31,7 @@ export default function Home() {
             <Link href="/signup">
               <Button size="lg">Get Started</Button>
             </Link>
-            <Link href="/login">
+            <Link href="https://github.com/duclong565" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="lg">
                 Learn More
               </Button>

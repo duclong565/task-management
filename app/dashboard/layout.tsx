@@ -9,9 +9,11 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen">
       <header className="border-b">
-        <div className="container flex h-14 items-center justify-between">
-          <h1 className="text-xl font-bold">Task Manager</h1>
-          <UserNav />
+        <div className="mx-auto flex h-14 items-center justify-between">
+          <h1 className="text-xl font-bold pd-0 ml-8">Task Manager</h1>
+          <div className="flex items-center pr-1 mr-12">
+            <UserNav />
+          </div>
         </div>
       </header>
       {children}
