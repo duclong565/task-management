@@ -11,10 +11,9 @@ import MainContent from "@/components/main-content/main-content"
 export default function DashboardPage() {
 
   return (
-    <div className="flex">
+    <div className="flex h-screen">
       {/* Sidebar */}
       <Sidebar />
-
       {/* Main content */}
       <MainContent />    
     </div>
