@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Folder, MoreVertical, Pencil, Plus, Trash } from "lucide-react";
+import { Folder, MoreVertical, Pencil, Plus, Trash, Heart } from "lucide-react";
 import FolderItem from "@/lib/folder-api/folder-interface";
 import {
   getFolders,
@@ -25,25 +25,21 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import HeartRain from "./heart-rain";
 
 interface FolderListProps {
-  selectedFolderId?: string;
-  onFolderSelect: (folderId: string) => void;
+  onFolderSelect?: (folderId: string) => void;
 }
 
-export default function FolderList({
-  selectedFolderId,
-  onFolderSelect,
-}: FolderListProps) {
+export default function FolderList({ onFolderSelect }: FolderListProps) {
   const [folders, setFolders] = useState<FolderItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedFolder, setSelectedFolder] = useState<string>();
-
-  // Dialog states
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingFolder, setEditingFolder] = useState<FolderItem | null>(null);
   const [folderTitle, setFolderTitle] = useState("");
+  const [editingFolder, setEditingFolder] = useState<FolderItem | null>(null);
+  const [showHeartRain, setShowHeartRain] = useState(false);
 
   useEffect(() => {
     fetchFolders();
@@ -111,7 +107,7 @@ export default function FolderList({
       setFolders(folders.filter((folder) => folder.id !== folderId));
       toast.success("Folder deleted successfully");
       if (selectedFolder === folderId) {
-        setSelectedFolder(undefined);
+        setSelectedFolder(null);
       }
     } catch (error) {
       console.error("Error deleting folder: ", error);
@@ -133,23 +129,34 @@ export default function FolderList({
     );
   }
 
-  const handleFolderClick = (folderId: string) => {
+  const handleFolderClick = (folderId: string, title: string) => {
     setSelectedFolder(folderId);
     if (onFolderSelect) {
       onFolderSelect(folderId);
     }
+    
+    // Trigger heart rain for "Ngân" folder
+    if (title === "Ngân") {
+      setShowHeartRain(true);
+      // Start fade out after 3 seconds
+      setTimeout(() => setShowHeartRain(false), 5000);
+    } else {
+      setShowHeartRain(false);
+    }
   };
 
   return (
-    <>
-      <div className="mb-4">
+    <div className="relative">
+      <HeartRain isActive={showHeartRain} />
+      
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Folders</h2>
         <Button
           variant="outline"
-          className="w-full justify-start"
           size="sm"
           onClick={() => setIsCreateDialogOpen(true)}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus />
           New Folder
         </Button>
       </div>
@@ -160,18 +167,26 @@ export default function FolderList({
             <div key={folder.id} className="group flex items-center">
               <Button
                 variant={selectedFolder === folder.id ? "default" : "ghost"}
-                className="w-full justify-start"
+                className={`w-full justify-start ${
+                  folder.title === "Ngân" ? "text-pink-500 hover:text-pink-600" : ""
+                }`}
                 size="sm"
-                onClick={() => handleFolderClick(folder.id)}
+                onClick={() => handleFolderClick(folder.id, folder.title)}
               >
-                <Folder className="mr-2 h-4 w-4" />
+                {folder.title === "Ngân" ? (
+                  <Heart className="mr-2 h-4 w-4 fill-pink-500" />
+                ) : (
+                  <Folder className="mr-2 h-4 w-4" />
+                )}
                 {folder.title}
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100"
+                    className={`h-8 w-8 p-0 opacity-0 group-hover:opacity-100 ${
+                      folder.title === "Ngân" ? "text-pink-500 hover:text-pink-600" : ""
+                    }`}
                   >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
@@ -246,6 +261,6 @@ export default function FolderList({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }
