@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus } from "lucide-react";
 import TaskList from "@/components/task-list";
-import Sidebar from "@/components/sidebar/side-bar";
 
-export default function MainContent() {
+interface MainContentProps {
+  selectedFolderId?: string;
+}
+
+export default function MainContent({ selectedFolderId }: MainContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
@@ -27,7 +30,7 @@ export default function MainContent() {
           New Task
         </Button>
       </div>
-      <TaskList />
+      <TaskList selectedFolderId={selectedFolderId} />
     </div>
   );
 }

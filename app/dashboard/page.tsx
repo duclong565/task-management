@@ -1,22 +1,25 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, Plus } from "lucide-react"
-import TaskList from "@/components/task-list"
-import Sidebar from "@/components/sidebar/side-bar"
-import MainContent from "@/components/main-content/main-content"
+import Sidebar from "@/components/sidebar/side-bar";
+import MainContent from "@/components/main-content/main-content";
+import { useState } from "react";
 
 export default function DashboardPage() {
+  const [selectedFolderId, setSelectedFolderId] = useState<string>();
+
+  const handleFolderSelect = (folderId: string) => {
+    setSelectedFolderId(folderId);
+  };
 
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar
+        selectedFolderId={selectedFolderId}
+        onFolderSelect={handleFolderSelect}
+      />
       {/* Main content */}
-      <MainContent />    
+      <MainContent selectedFolderId={selectedFolderId} />
     </div>
-  )
+  );
 }
-

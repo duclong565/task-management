@@ -4,7 +4,12 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Folder, MoreVertical, Pencil, Plus, Trash } from "lucide-react";
 import FolderItem from "@/lib/folder-api/folder-interface";
-import { getFolders, updateFolder, deleteFolder, createFolder } from "@/lib/folder-api/folder-api";
+import {
+  getFolders,
+  updateFolder,
+  deleteFolder,
+  createFolder,
+} from "@/lib/folder-api/folder-api";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,11 +26,19 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
-export default function FolderList() {
+interface FolderListProps {
+  selectedFolderId?: string;
+  onFolderSelect: (folderId: string) => void;
+}
+
+export default function FolderList({
+  selectedFolderId,
+  onFolderSelect,
+}: FolderListProps) {
   const [folders, setFolders] = useState<FolderItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedFolder, setSelectedFolder] = useState<string>();
-  
+
   // Dialog states
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -75,11 +88,13 @@ export default function FolderList() {
 
     try {
       await updateFolder(editingFolder.id, folderTitle);
-      setFolders(folders.map(folder => 
-        folder.id === editingFolder.id 
-          ? { ...folder, title: folderTitle }
-          : folder
-      ));
+      setFolders(
+        folders.map((folder) =>
+          folder.id === editingFolder.id
+            ? { ...folder, title: folderTitle }
+            : folder
+        )
+      );
       toast.success("Folder updated successfully");
       setIsEditDialogOpen(false);
       setEditingFolder(null);
@@ -93,7 +108,7 @@ export default function FolderList() {
   const handleDelete = async (folderId: string) => {
     try {
       await deleteFolder(folderId);
-      setFolders(folders.filter(folder => folder.id !== folderId));
+      setFolders(folders.filter((folder) => folder.id !== folderId));
       toast.success("Folder deleted successfully");
       if (selectedFolder === folderId) {
         setSelectedFolder(undefined);
@@ -111,15 +126,26 @@ export default function FolderList() {
   };
 
   if (loading) {
-    return <div className="text-center text-sm text-muted-foreground">Loading Folders...</div>;
+    return (
+      <div className="text-center text-sm text-muted-foreground">
+        Loading Folders...
+      </div>
+    );
   }
+
+  const handleFolderClick = (folderId: string) => {
+    setSelectedFolder(folderId);
+    if (onFolderSelect) {
+      onFolderSelect(folderId);
+    }
+  };
 
   return (
     <>
       <div className="mb-4">
-        <Button 
-          variant="outline" 
-          className="w-full justify-start" 
+        <Button
+          variant="outline"
+          className="w-full justify-start"
           size="sm"
           onClick={() => setIsCreateDialogOpen(true)}
         >
@@ -136,7 +162,7 @@ export default function FolderList() {
                 variant={selectedFolder === folder.id ? "default" : "ghost"}
                 className="w-full justify-start"
                 size="sm"
-                onClick={() => setSelectedFolder(folder.id)}
+                onClick={() => handleFolderClick(folder.id)}
               >
                 <Folder className="mr-2 h-4 w-4" />
                 {folder.title}
@@ -155,7 +181,7 @@ export default function FolderList() {
                     <Pencil className="mr-2 h-4 w-4" />
                     Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={() => handleDelete(folder.id)}
                     className="text-red-600"
                   >
@@ -186,7 +212,10 @@ export default function FolderList() {
             className="mt-4"
           />
           <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsCreateDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleCreateFolder}>Create</Button>
@@ -207,7 +236,10 @@ export default function FolderList() {
             className="mt-4"
           />
           <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsEditDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleEditFolder}>Save</Button>
