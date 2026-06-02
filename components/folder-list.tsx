@@ -28,13 +28,16 @@ import {
 import HeartRain from "./heart-rain";
 
 interface FolderListProps {
+  selectedFolderId?: string;
   onFolderSelect?: (folderId: string) => void;
 }
 
-export default function FolderList({ onFolderSelect }: FolderListProps) {
+export default function FolderList({
+  selectedFolderId,
+  onFolderSelect,
+}: FolderListProps) {
   const [folders, setFolders] = useState<FolderItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [folderTitle, setFolderTitle] = useState("");
@@ -106,9 +109,6 @@ export default function FolderList({ onFolderSelect }: FolderListProps) {
       await deleteFolder(folderId);
       setFolders(folders.filter((folder) => folder.id !== folderId));
       toast.success("Folder deleted successfully");
-      if (selectedFolder === folderId) {
-        setSelectedFolder(null);
-      }
     } catch (error) {
       console.error("Error deleting folder: ", error);
       toast.error("Failed to delete folder");
@@ -130,15 +130,11 @@ export default function FolderList({ onFolderSelect }: FolderListProps) {
   }
 
   const handleFolderClick = (folderId: string, title: string) => {
-    setSelectedFolder(folderId);
-    if (onFolderSelect) {
-      onFolderSelect(folderId);
-    }
-    
-    // Trigger heart rain for "Ngân" folder
+    onFolderSelect?.(folderId);
+
+    // Trigger heart rain for the "Ngân" folder
     if (title === "Ngân") {
       setShowHeartRain(true);
-      // Start fade out after 3 seconds
       setTimeout(() => setShowHeartRain(false), 5000);
     } else {
       setShowHeartRain(false);
@@ -166,7 +162,7 @@ export default function FolderList({ onFolderSelect }: FolderListProps) {
           folders.map((folder) => (
             <div key={folder.id} className="group flex items-center">
               <Button
-                variant={selectedFolder === folder.id ? "default" : "ghost"}
+                variant={selectedFolderId === folder.id ? "default" : "ghost"}
                 className={`w-full justify-start ${
                   folder.title === "Ngân" ? "text-pink-500 hover:text-pink-600" : ""
                 }`}

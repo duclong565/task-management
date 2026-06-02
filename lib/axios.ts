@@ -7,8 +7,8 @@ export const api = axios.create({
   },
 });
 
-// Add a request interceptor
-export default api.interceptors.request.use((config) => {
+// Attach the bearer token to every request when one is present.
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

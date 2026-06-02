@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import { api } from "@/lib/axios";
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
@@ -18,16 +18,12 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle sign up logic here
     try {
-      const response = await axios.post(
-        process.env.NEXT_PUBLIC_API_URL + "/auth/signup",
-        {
-          email,
-          username,
-          password,
-        }
-      );
+      const response = await api.post("/auth/signup", {
+        email,
+        username,
+        password,
+      });
 
       localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("username", username);
@@ -81,8 +77,8 @@ export default function SignUpPage() {
               required
             />
           </div>
+          {error && <p className="text-red-500">{error}</p>}
           <Button className="w-full">Sign Up</Button>
-        {error && <p className="text-red-500">{error}</p>}
         </form>
         <div className="text-center text-sm">
           Already have an account?{" "}

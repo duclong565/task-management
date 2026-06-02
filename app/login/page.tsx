@@ -1,12 +1,12 @@
-"use client"; //use client for client side rendering
+"use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import { api } from "@/lib/axios";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -16,17 +16,9 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Handle login logic here
     try {
-      const response = await axios.post(
-        process.env.NEXT_PUBLIC_API_URL + "/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await api.post("/auth/login", { email, password });
 
-      //Store the token in localstorage
       localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("username", response.data.username);
 
@@ -72,7 +64,7 @@ export default function LoginPage() {
           <Button className="w-full">Login</Button>
         </form>
         <div className="text-center text-sm">
-          Dont have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/signup" className="underline">
             Sign up
           </Link>

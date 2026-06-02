@@ -10,9 +10,13 @@ import { toast } from "sonner";
 
 interface TaskListProps {
   selectedFolderId?: string;
+  refreshKey?: number;
 }
 
-export default function TaskList({ selectedFolderId }: TaskListProps) {
+export default function TaskList({
+  selectedFolderId,
+  refreshKey,
+}: TaskListProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -26,10 +30,7 @@ export default function TaskList({ selectedFolderId }: TaskListProps) {
       try {
         setLoading(true);
         const response = await getTasksByFolder(selectedFolderId);
-        if (response) {
-          setTasks(response);
-          toast.success("Tasks loaded successfully");
-        }
+        setTasks(response ?? []);
       } catch (error) {
         console.error("Error loading tasks:", error);
         toast.error("Failed to load tasks");
@@ -39,7 +40,7 @@ export default function TaskList({ selectedFolderId }: TaskListProps) {
     };
 
     fetchTasks();
-  }, [selectedFolderId]);
+  }, [selectedFolderId, refreshKey]);
 
   const toggleTask = (taskId: string) => {
     setTasks(

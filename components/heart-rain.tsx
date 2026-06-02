@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Heart } from 'lucide-react';
 
-interface Heart {
+interface HeartParticle {
   id: number;
   x: number;
   y: number;
@@ -19,7 +19,7 @@ interface HeartRainProps {
 }
 
 export default function HeartRain({ isActive }: HeartRainProps) {
-  const [hearts, setHearts] = useState<Heart[]>([]);
+  const [hearts, setHearts] = useState<HeartParticle[]>([]);
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
@@ -40,8 +40,8 @@ export default function HeartRain({ isActive }: HeartRainProps) {
       }));
 
       setHearts(initialHearts);
-    } else if (hearts.length > 0) {
-      // When deactivated but hearts exist, start fade out instead of immediate removal
+    } else {
+      // When deactivated, fade existing hearts out instead of removing them abruptly.
       setIsFadingOut(true);
     }
   }, [isActive]);
@@ -85,7 +85,7 @@ export default function HeartRain({ isActive }: HeartRainProps) {
             rotation: heart.rotation + 0.2 * deltaTime,
             opacity: newOpacity
           };
-        }).filter(Boolean) as Heart[]; // Remove null items
+        }).filter(Boolean) as HeartParticle[]; // Remove null items
 
         return updatedHearts;
       });
